@@ -97,5 +97,11 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\GeboSigCommon\GeboSigCommon.csproj">
+      <Project>{c956f10e-f224-48dd-be00-2e3f332007f5}</Project>
+      <Name>GeboSigCommon</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

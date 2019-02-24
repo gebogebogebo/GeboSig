@@ -23,6 +23,7 @@ using Org.BouncyCastle.Crypto.Parameters;
 using Org.BouncyCastle.Math;
 
 using GeboSigCommon;
+using Org.BouncyCastle.Security;
 
 namespace GeboSigSignature
 {
@@ -75,6 +76,12 @@ namespace GeboSigSignature
             System.IO.File.WriteAllBytes(file_out_sig, sig);
 
             textLog.Text = textLog.Text + string.Format($"Signature ... Success!");
+
+            // こっちに変更する
+            {
+                var sig2 = createSign(keyPair, System.IO.File.ReadAllBytes(file_in_target));
+                System.IO.File.WriteAllBytes(string.Format($"{textSigPath.Text}sig2.sig"), sig2);
+            }
 
             return;
         }
@@ -135,5 +142,29 @@ namespace GeboSigSignature
             return result;
         }
 
+
+        private byte[] createSign(AsymmetricCipherKeyPair keyPair, byte[] data)
+        {
+            // Make the key
+            RsaKeyParameters key = (RsaKeyParameters)keyPair.Private;
+
+            // Init alg
+            ISigner sig = SignerUtilities.GetSigner(GeboSigCommon.Common.SigAlgorithm);
+
+            // Populate key
+            sig.Init(true, key);
+
+            // Get the bytes to be signed from the string
+            var bytes = data;
+
+            // Calc the signature
+            sig.BlockUpdate(bytes, 0, bytes.Length);
+            byte[] signature = sig.GenerateSignature();
+
+            // Base 64 encode the sig so its 8-bit clean
+            //var signedString = Convert.ToBase64String(signature);
+
+            return signature;
+        }
     }
 }

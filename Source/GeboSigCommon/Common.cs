@@ -10,6 +10,8 @@ namespace GeboSigCommon
     {
         public static readonly string RPID = "GeboSig.gebo.com";
 
+        public static readonly string SigAlgorithm = "SHA1withRSA";
+        
         // DER から PEM に変換する
         public static string ConvertPrivateKeyDERtoPEM(byte[] der)
         {

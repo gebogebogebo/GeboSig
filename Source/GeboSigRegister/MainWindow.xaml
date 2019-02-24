@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:GeboSigRegister"
         mc:Ignorable="d"
-        Title="GeboSig Register" Height="400" Width="400">
+        Title="GeboSig Register" Height="400" Width="400" WindowStartupLocation="CenterScreen">
     <Grid>
         <Label Content="登録　初期化済みのFIDO2キーをセットしてください" HorizontalAlignment="Left" Height="32" Margin="36,10,0,0" VerticalAlignment="Top" Width="340"/>
         <Label Content="User Name" HorizontalAlignment="Left" Height="29" Margin="46,55,0,0" VerticalAlignment="Top" Width="89"/>

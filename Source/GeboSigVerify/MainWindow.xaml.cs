@@ -46,12 +46,12 @@ namespace GeboSigVerify
         private void ButtonVerify_Click(object sender, RoutedEventArgs e)
         {
             // input 
-            string file_in_sig = @"C:\work\sig.sig";
+            string file_in_sig = @"C:\work\sig2.sig";
             string file_in_target = @"C:\work\とっても大事な文書.pdf";
 
             var publicKey = readPublicKeyfromCert(@"C:\work\TestUser.crt");
 
-            ISigner signer = SignerUtilities.GetSigner("SHA1withRSA");
+            ISigner signer = SignerUtilities.GetSigner(GeboSigCommon.Common.SigAlgorithm);
             signer.Init(false, publicKey);
 
             // 一回よみこまないといけないの？！・・・
