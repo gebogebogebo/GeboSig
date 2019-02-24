@@ -1,0 +1,43 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.28307.421
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GeboSigRegister", "GeboSigRegister\GeboSigRegister.csproj", "{F448F930-91F7-4008-AAEA-3AD2E15B9FB3}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GeboSigSignature", "GeboSigSignature\GeboSigSignature.csproj", "{E0F5E487-EB87-43E9-A6C0-BE062E56097D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GeboSigVerify", "GeboSigVerify\GeboSigVerify.csproj", "{4E40B8FA-B796-4922-A2F5-B35A434C31C7}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GeboSigCommon", "GeboSigCommon\GeboSigCommon.csproj", "{C956F10E-F224-48DD-BE00-2E3F332007F5}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{F448F930-91F7-4008-AAEA-3AD2E15B9FB3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F448F930-91F7-4008-AAEA-3AD2E15B9FB3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F448F930-91F7-4008-AAEA-3AD2E15B9FB3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F448F930-91F7-4008-AAEA-3AD2E15B9FB3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E0F5E487-EB87-43E9-A6C0-BE062E56097D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E0F5E487-EB87-43E9-A6C0-BE062E56097D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E0F5E487-EB87-43E9-A6C0-BE062E56097D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E0F5E487-EB87-43E9-A6C0-BE062E56097D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4E40B8FA-B796-4922-A2F5-B35A434C31C7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4E40B8FA-B796-4922-A2F5-B35A434C31C7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4E40B8FA-B796-4922-A2F5-B35A434C31C7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4E40B8FA-B796-4922-A2F5-B35A434C31C7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C956F10E-F224-48DD-BE00-2E3F332007F5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C956F10E-F224-48DD-BE00-2E3F332007F5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C956F10E-F224-48DD-BE00-2E3F332007F5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C956F10E-F224-48DD-BE00-2E3F332007F5}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {FF3A64C5-8119-4274-A5BA-D51D3D0A9568}
+	EndGlobalSection
+EndGlobal
