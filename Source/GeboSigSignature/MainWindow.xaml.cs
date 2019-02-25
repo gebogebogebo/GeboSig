@@ -24,6 +24,7 @@ using Org.BouncyCastle.Math;
 
 using GeboSigCommon;
 using Org.BouncyCastle.Security;
+using System.IO.Compression;
 
 namespace GeboSigSignature
 {
@@ -43,14 +44,14 @@ namespace GeboSigSignature
             string file_in_target = textTargetFile.Text;
 
             // output
-            string file_out_sig = string.Format($"{textSigPath.Text}sig.sig");
+            //string file_out_sig = string.Format($"{textSigPath.Text}sig.sig");
 
             textLog.Text = textLog.Text + string.Format($"Read-Start ... ");
 
-            var readData = await readRecs(GeboSigCommon.Common.RPID,textPIN.Text);
+            var readData = await readRecs(GeboSigCommon.Common.RPID, textPIN.Text);
             textLog.Text = textLog.Text + string.Format($"...{readData.msg}") + "\r\n";
 
-            if( readData.isSuccess == false) {
+            if (readData.isSuccess == false) {
                 return;
             }
 
@@ -61,29 +62,56 @@ namespace GeboSigSignature
             var privateKeyReader = new PemReader(new StringReader(privateKeyPem));
             var keyPair = (AsymmetricCipherKeyPair)privateKeyReader.ReadObject();
 
-            // RSA暗号標準オブジェクト(PKCS#1)を生成
-            var rsa = new Pkcs1Encoding(new RsaEngine());
+            // 署名作成
+            var sig = createSign(keyPair, System.IO.File.ReadAllBytes(file_in_target));
 
-            // RSA暗号オブジェクトを初期化（第１引数 true は「暗号」を示す）
-            rsa.Init(true, keyPair.Private);
+            /*
+            {
+                // RSA暗号標準オブジェクト(PKCS#1)を生成
+                var rsa = new Pkcs1Encoding(new RsaEngine());
 
-            // 署名元データ生成
-            var dgstinfo = GeboSigCommon.Common.CreateSHA1DigestInfo(file_in_target);
+                // RSA暗号オブジェクトを初期化（第１引数 true は「暗号」を示す）
+                rsa.Init(true, keyPair.Private);
 
-            // 暗号化されたバイト列を渡し、復号されたバイト列を受け取る
-            byte[] sig = rsa.ProcessBlock(dgstinfo, 0, dgstinfo.Length);
+                // 署名元データ生成
+                var dgstinfo = GeboSigCommon.Common.CreateSHA1DigestInfo(file_in_target);
 
-            System.IO.File.WriteAllBytes(file_out_sig, sig);
+                // 暗号化されたバイト列を渡し、復号されたバイト列を受け取る
+                byte[] sig = rsa.ProcessBlock(dgstinfo, 0, dgstinfo.Length);
+
+                System.IO.File.WriteAllBytes(file_out_sig, sig);
+            }
+            */
+
+            // ターゲットファイルと署名をzip
+            createZip(file_in_target, sig);
 
             textLog.Text = textLog.Text + string.Format($"Signature ... Success!");
 
-            // こっちに変更する
+            return;
+        }
+
+        private bool createZip(string targetFile, byte[] sig)
+        {
+            var rootDir = Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory);
+            var targetFileTitle = System.IO.Path.GetFileNameWithoutExtension(targetFile);
+            var targetFileName = System.IO.Path.GetFileName(targetFile);
+            var zipFile = $@"{rootDir}\{targetFileTitle}.zip";
+
+            // zipに固める
+            using (var z = ZipFile.Open(zipFile, ZipArchiveMode.Update))
             {
-                var sig2 = createSign(keyPair, System.IO.File.ReadAllBytes(file_in_target));
-                System.IO.File.WriteAllBytes(string.Format($"{textSigPath.Text}sig2.sig"), sig2);
+                z.CreateEntryFromFile(targetFile, targetFileName, CompressionLevel.Optimal);
+
+                ZipArchiveEntry item = z.CreateEntry("sig.sig",CompressionLevel.Optimal);
+                using (Stream stream = item.Open())
+                {
+                    stream.Write(sig, 0, sig.Length);
+                    stream.Flush();
+                }
             }
 
-            return;
+            return true;
         }
 
         private async Task<ReadData> readRecs(string rpid,string pin)
