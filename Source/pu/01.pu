@@ -1,0 +1,34 @@
+@startuml
+
+:管理者: as Admin
+:一般ユーザー: as User
+
+(登録アプリ) as GeboSigRegister
+(署名アプリ) as GeboSigSignature
+(検証アプリ) as GeboSigVerify
+
+[セキュリティキー] as Authenticator
+[証明書] as Cert
+[書類ファイル] as Document
+[電子署名] as Sig
+
+Admin -> GeboSigRegister
+GeboSigRegister -> Authenticator
+GeboSigRegister -> Cert
+
+Authenticator -> User
+User -> Document
+User -> GeboSigSignature
+Document ---> GeboSigSignature
+Authenticator --> GeboSigSignature
+GeboSigSignature -> Sig
+
+Document --> Admin
+Sig --> Admin
+Sig --> GeboSigVerify
+Admin -> GeboSigVerify
+Document -> GeboSigVerify
+Cert -> GeboSigVerify
+note right of GeboSigVerify : 書類ファイルの真正性チェック.
+
+@enduml
