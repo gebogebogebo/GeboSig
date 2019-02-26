@@ -19,7 +19,6 @@ using Org.BouncyCastle.OpenSsl;
 using Org.BouncyCastle.Pkcs;
 using Org.BouncyCastle.Security;
 using Org.BouncyCastle.X509;
-
 using GeboSigCommon;
 
 namespace GeboSigRegister
@@ -37,12 +36,18 @@ namespace GeboSigRegister
         private async void ButtonRegister_Click(object sender, RoutedEventArgs e)
         {
             // 入力チェック
-            if( await checkInput() == false) {
+            if( await checkInput(false) == false) {
                 return;
             }
 
             // キーペアを作成
             var keyPair = createKeyPair(1024);
+
+            // PrivateKeyをDERにする
+            var derPrivatekey = getPrivatekyDER(keyPair);
+
+            // AES256(derPrivateKey)
+            derPrivatekey = BouncyCastleRijndael.Encrypt(derPrivatekey);
 
             // 証明書を作成
             var cert = createCertificate(keyPair,textUserName.Text);
@@ -54,8 +59,6 @@ namespace GeboSigRegister
 
             // Authenticatorに書き込み
             {
-                var derPrivatekey = getPrivatekyDER(keyPair);
-
                 var writeDataList = createWriteDataList(derPrivatekey);
 
                 textLog.Text = textLog.Text + string.Format($"Write-Start {writeDataList.Count} \r\n");
@@ -80,18 +83,23 @@ namespace GeboSigRegister
             return;
         }
 
-        private async Task<bool> checkInput()
+        private async Task<bool> checkInput(bool checkPIN)
         {
-            var info = await WebAuthnModokiDesktop.credentials.info(gebo.CTAP2.DevParam.getDefaultParams());
-            if (info.isSuccess == false) {
-                textLog.Text = textLog.Text + string.Format($"Check Error ...{info.msg}");
-                return false;
-            }
+            if( checkPIN)
+            {
+                var info = await WebAuthnModokiDesktop.credentials.info(gebo.CTAP2.DevParam.getDefaultParams());
+                if (info.isSuccess == false)
+                {
+                    textLog.Text = textLog.Text + string.Format($"Check Error ...{info.msg}");
+                    return false;
+                }
 
-            // PINが設定されていない状態でないといけない
-            if( info.AuthenticatorInfo.Option_clientPin != gebo.CTAP2.CTAPResponseInfo.OptionFlag.present_and_set_to_false) {
-                textLog.Text = textLog.Text + string.Format($"Check Error ...Authenticatorを初期化してください");
-                return false;
+                // PINが設定されていない状態でないといけない
+                if (info.AuthenticatorInfo.Option_clientPin != gebo.CTAP2.CTAPResponseInfo.OptionFlag.present_and_set_to_false)
+                {
+                    textLog.Text = textLog.Text + string.Format($"Check Error ...Authenticatorを初期化してください");
+                    return false;
+                }
             }
 
             return true;
