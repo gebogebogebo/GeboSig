@@ -20,6 +20,7 @@ using Org.BouncyCastle.Pkcs;
 using Org.BouncyCastle.Security;
 using Org.BouncyCastle.X509;
 using GeboSigCommon;
+using System.Diagnostics;
 
 namespace GeboSigRegister
 {
@@ -36,7 +37,7 @@ namespace GeboSigRegister
         private async void ButtonRegister_Click(object sender, RoutedEventArgs e)
         {
             // 入力チェック
-            if( await checkInput(false) == false) {
+            if( await checkInput(true) == false) {
                 return;
             }
 
@@ -46,8 +47,15 @@ namespace GeboSigRegister
             // PrivateKeyをDERにする
             var derPrivatekey = getPrivatekyDER(keyPair);
 
-            // AES256(derPrivateKey)
+            Debug.WriteLine($"DER {gebo.CTAP2.Common.BytesToHexString(derPrivatekey)}");
+
+            // derPrivatekey = AES256(derPrivateKey)
             derPrivatekey = BouncyCastleRijndael.Encrypt(derPrivatekey);
+
+            Debug.WriteLine($"DER(Encrypted) {gebo.CTAP2.Common.BytesToHexString(derPrivatekey)}");
+
+            //var tmp = BouncyCastleRijndael.Decrypt(derPrivatekey);
+            //Debug.WriteLine($"DER(Decrypted) {gebo.CTAP2.Common.BytesToHexString(tmp)}");
 
             // 証明書を作成
             var cert = createCertificate(keyPair,textUserName.Text);

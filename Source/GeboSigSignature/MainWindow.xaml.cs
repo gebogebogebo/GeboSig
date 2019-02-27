@@ -25,6 +25,7 @@ using Org.BouncyCastle.Math;
 using GeboSigCommon;
 using Org.BouncyCastle.Security;
 using System.IO.Compression;
+using System.Diagnostics;
 
 namespace GeboSigSignature
 {
@@ -55,11 +56,19 @@ namespace GeboSigSignature
                 return;
             }
 
+            Debug.WriteLine($"DER(Encrypted) {gebo.CTAP2.Common.BytesToHexString(readData.data)}");
+
+            // Decrypt
+            // derPrivatekey = AES256(readData.data)
+            var derPrivatekey = BouncyCastleRijndael.Decrypt(readData.data);
+
+            Debug.WriteLine($"DER(Decrypted) {gebo.CTAP2.Common.BytesToHexString(derPrivatekey)}");
+
             // DER to PEM
-            var privateKeyPem = GeboSigCommon.Common.ConvertPrivateKeyDERtoPEM(readData.data);
+            var pemPrivateKey = GeboSigCommon.Common.ConvertPrivateKeyDERtoPEM(derPrivatekey);
 
             // PEMフォーマットの秘密鍵を読み込んで KeyPair オブジェクトを生成
-            var privateKeyReader = new PemReader(new StringReader(privateKeyPem));
+            var privateKeyReader = new PemReader(new StringReader(pemPrivateKey));
             var keyPair = (AsymmetricCipherKeyPair)privateKeyReader.ReadObject();
 
             // 署名作成
