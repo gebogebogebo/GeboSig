@@ -44,18 +44,25 @@ namespace GeboSigRegister
             // キーペアを作成
             var keyPair = createKeyPair(1024);
 
+            // PrivateKeyをPEMにする
+            //var pemPrivateKey = getPrivatekyPEM(keyPair);
+            //Debug.WriteLine($"PEM            {pemPrivateKey.Length}:{pemPrivateKey}");
+
+            // encPrivateKey = AES256(pemPrivateKey)
+            //var encPrivatekey = BouncyCastleRijndael.Encrypt(Encoding.UTF8.GetBytes(pemPrivateKey));
+            //Debug.WriteLine($"Enc(PEM) {encPrivatekey.Length}:{gebo.CTAP2.Common.BytesToHexString(encPrivatekey)}");
+
             // PrivateKeyをDERにする
             var derPrivatekey = getPrivatekyDER(keyPair);
+            Debug.WriteLine($"DER            {derPrivatekey.Length}:{gebo.CTAP2.Common.BytesToHexString(derPrivatekey)}");
 
-            Debug.WriteLine($"DER {gebo.CTAP2.Common.BytesToHexString(derPrivatekey)}");
+            // AES(256)
+            var encPrivatekey = BouncyCastleRijndael.Encrypt(derPrivatekey);
+            Debug.WriteLine($"DER(Encrypted) {encPrivatekey.Length}:{gebo.CTAP2.Common.BytesToHexString(encPrivatekey)}");
 
-            // derPrivatekey = AES256(derPrivateKey)
-            derPrivatekey = BouncyCastleRijndael.Encrypt(derPrivatekey);
-
-            Debug.WriteLine($"DER(Encrypted) {gebo.CTAP2.Common.BytesToHexString(derPrivatekey)}");
-
-            //var tmp = BouncyCastleRijndael.Decrypt(derPrivatekey);
-            //Debug.WriteLine($"DER(Decrypted) {gebo.CTAP2.Common.BytesToHexString(tmp)}");
+            //var tmp = BouncyCastleRijndael.Decrypt(encPrivatekey);
+            //var tmppem = Encoding.UTF8.GetString(tmp);
+            //Debug.WriteLine($"Dec(PEM) {tmppem.Length}:{tmppem}");
 
             // 証明書を作成
             var cert = createCertificate(keyPair,textUserName.Text);
@@ -67,7 +74,7 @@ namespace GeboSigRegister
 
             // Authenticatorに書き込み
             {
-                var writeDataList = createWriteDataList(derPrivatekey);
+                var writeDataList = createWriteDataList(encPrivatekey);
 
                 textLog.Text = textLog.Text + string.Format($"Write-Start {writeDataList.Count} \r\n");
                 foreach (var rec in writeDataList) {
@@ -138,6 +145,22 @@ namespace GeboSigRegister
 
             return (keyPair);
         }
+
+        /*
+        private string getPrivatekyPEM(AsymmetricCipherKeyPair keyPair)
+        {
+            var mem = new MemoryStream();
+            using (var writer = new StreamWriter(mem, Encoding.ASCII))
+            {
+                var pemWriter = new PemWriter(writer);
+                pemWriter.WriteObject(keyPair.Private);
+                pemWriter.Writer.Flush();
+            }
+            var pem = Encoding.UTF8.GetString(mem.ToArray());
+
+            return (pem);
+        }
+        */
 
         private byte[] getPrivatekyDER(AsymmetricCipherKeyPair keyPair)
         {

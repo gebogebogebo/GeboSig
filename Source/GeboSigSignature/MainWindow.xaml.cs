@@ -56,16 +56,19 @@ namespace GeboSigSignature
                 return;
             }
 
-            Debug.WriteLine($"DER(Encrypted) {gebo.CTAP2.Common.BytesToHexString(readData.data)}");
+            Debug.WriteLine($"DER(Encrypted) {readData.data.Length}:{gebo.CTAP2.Common.BytesToHexString(readData.data)}");
+            //Debug.WriteLine($"Enc(PEM) {readData.data.Length}:{gebo.CTAP2.Common.BytesToHexString(readData.data)}");
 
             // Decrypt
-            // derPrivatekey = AES256(readData.data)
-            var derPrivatekey = BouncyCastleRijndael.Decrypt(readData.data);
+            var decData = BouncyCastleRijndael.Decrypt(readData.data);
+            Debug.WriteLine($"DER(Decrypted) {decData.Length}:{gebo.CTAP2.Common.BytesToHexString(decData)}");
 
-            Debug.WriteLine($"DER(Decrypted) {gebo.CTAP2.Common.BytesToHexString(derPrivatekey)}");
+            // パディングデータを除去する
+            var decPrivateKey = getPrivateKey(decData);
+            Debug.WriteLine($"PrivateKey     {decPrivateKey.Length}:{gebo.CTAP2.Common.BytesToHexString(decPrivateKey)}");
 
             // DER to PEM
-            var pemPrivateKey = GeboSigCommon.Common.ConvertPrivateKeyDERtoPEM(derPrivatekey);
+            var pemPrivateKey = GeboSigCommon.Common.ConvertPrivateKeyDERtoPEM(decPrivateKey);
 
             // PEMフォーマットの秘密鍵を読み込んで KeyPair オブジェクトを生成
             var privateKeyReader = new PemReader(new StringReader(pemPrivateKey));
@@ -98,6 +101,27 @@ namespace GeboSigSignature
             textLog.Text = textLog.Text + string.Format($"Signature ... Success!");
 
             return;
+        }
+
+        private byte[] getPrivateKey(byte[] decData)
+        {
+            if(decData[0] != 0x30)
+            {
+                return (null);
+            }
+            if (decData[1] != 0x82)
+            {
+                return (null);
+            }
+
+            var datasize = (int)ChangeEndian.Reverse(BitConverter.ToUInt16(decData, 2));
+            // blockData-4byte + status-2byte 
+            //datasize = ChangeEndian.Reverse(BitConverter.ToUInt16(response.Data, 2));
+
+            // add header-4byte
+            datasize = datasize + 4;
+
+            return(decData.ToList().Take(datasize).ToArray());
         }
 
         private bool createZip(string targetFile, byte[] sig)

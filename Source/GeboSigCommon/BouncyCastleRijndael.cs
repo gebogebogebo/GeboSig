@@ -16,6 +16,7 @@ namespace GeboSigCommon
         static PaddedBufferedBlockCipher cipher;
         static ParametersWithIV parametersWithIV;
 
+        /*
         static BouncyCastleRijndael()
         {
             // AES-128
@@ -30,8 +31,8 @@ namespace GeboSigCommon
             cipher = new PaddedBufferedBlockCipher(cbcBlockCipher, new ZeroBytePadding());
             parametersWithIV = new ParametersWithIV(new KeyParameter(key), iv);
         }
+        */
 
-        /* AES-256
         static BouncyCastleRijndael()
         {
             // AES-256
@@ -42,11 +43,10 @@ namespace GeboSigCommon
             // Mode = CBC
             // BlockSize = 256bit
             // PaddingMode = Zero
-            //var cbcBlockCipher = new CbcBlockCipher(new RijndaelEngine(256));
+            var cbcBlockCipher = new CbcBlockCipher(new RijndaelEngine(256));
             cipher = new PaddedBufferedBlockCipher(cbcBlockCipher, new ZeroBytePadding());
             parametersWithIV = new ParametersWithIV(new KeyParameter(key), iv);
         }
-        */
 
         public static byte[] Encrypt(byte[] inData)
         {
@@ -65,11 +65,11 @@ namespace GeboSigCommon
             var length = cipher.ProcessBytes(inData, bytes, 0);
             var ret = cipher.DoFinal(bytes, length);
 
-            //return bytes;
-            var outData = new List<byte>();
-            outData.AddRange(bytes);
+            return bytes;
+            //var outData = new List<byte>();
+            //outData.AddRange(bytes);
 
-            return outData.Take(length).ToArray();
+            //return outData.Take(length).ToArray();
         }
     }
 }
