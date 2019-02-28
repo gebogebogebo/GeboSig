@@ -1,34 +1,70 @@
 @startuml
 
-:管理者: as Admin
-:一般ユーザー: as User
+package "Repository" {
+    [証明書] as Cert
+}
 
-(登録アプリ) as GeboSigRegister
-(署名アプリ) as GeboSigSignature
-(検証アプリ) as GeboSigVerify
+package "Register" {
+    :システム管理者: as Admin
+    [セキュリティキー] as Authenticator
+    (登録アプリ) as GeboSigRegister
 
-[セキュリティキー] as Authenticator
-[証明書] as Cert
-[書類ファイル] as Document
-[電子署名] as Sig
+    Admin -> GeboSigRegister
+    GeboSigRegister -down-> Authenticator : 初期PIN
+    GeboSigRegister -down-> Cert
+}
 
-Admin -> GeboSigRegister
-GeboSigRegister -> Authenticator
-GeboSigRegister -> Cert
+package "ChangePIN" {
+    :一般ユーザー: as User0
+    [セキュリティキー] as Authenticator1
+    (PIN更新アプリ) as GeboSigChangePIN
 
-Authenticator -> User
-User -> Document
-User -> GeboSigSignature
-Document ---> GeboSigSignature
-Authenticator --> GeboSigSignature
-GeboSigSignature -> Sig
+    Authenticator .down.> Authenticator1
+    Authenticator1 -right-> User0
+    Authenticator1 -down-> GeboSigChangePIN
+    User0 -> GeboSigChangePIN
+}
 
-Document --> Admin
-Sig --> Admin
-Sig --> GeboSigVerify
-Admin -> GeboSigVerify
-Document -> GeboSigVerify
-Cert -> GeboSigVerify
-note right of GeboSigVerify : 書類ファイルの真正性チェック.
+package "Signature" {
+    [セキュリティキー] as Authenticator2
+    :一般ユーザー: as User
+    (署名アプリ) as GeboSigSignature
+    [書類ファイル] as Document
+    '[電子署名] as Sig
+    [署名された書類ファイル] as Zip
+
+    User0 .down.> User
+    GeboSigChangePIN -down-> Authenticator2
+    Authenticator2 -> User
+    User -down-> Document
+    User -> GeboSigSignature
+    Document -> GeboSigSignature  
+    Authenticator2 -> GeboSigSignature
+    GeboSigSignature -down-> Zip
+}
+
+package "Verify" {
+    [署名された書類ファイル] as Zip2
+    :マネージャ: as Manager
+    [書類ファイル] as Document2
+    [電子署名] as Sig2
+    (検証アプリ) as GeboSigVerify
+
+    Zip .down.> Zip2
+    Zip2 -down-> Document2
+    Zip2 -down-> Sig2
+    Manager -> GeboSigVerify : 書類ファイルの真正性チェック 
+    Manager <. GeboSigVerify : 検証OK 
+
+    Cert -> GeboSigVerify
+    Sig2 -down-> GeboSigVerify 
+    Document2 -down-> GeboSigVerify
+
+}
+
+
+
+
+
 
 @enduml
