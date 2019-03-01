@@ -5,14 +5,17 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:GeboSigSignature"
         mc:Ignorable="d"
-        Title="GeboSig Signature" Height="400" Width="400" WindowStartupLocation="CenterScreen">
+        Title="GeboSig Signature" Height="500" Width="500" WindowStartupLocation="CenterScreen">
     <Grid>
-        <Label Content="PIN" HorizontalAlignment="Left" Height="29" Margin="41,9,0,0" VerticalAlignment="Top" Width="89"/>
-        <TextBox x:Name="textPIN" HorizontalAlignment="Left" Height="21" Margin="160,13,0,0" TextWrapping="Wrap" Text="1234" VerticalAlignment="Top" Width="117"/>
-        <Label Content="ファイル" HorizontalAlignment="Left" Height="29" Margin="41,43,0,0" VerticalAlignment="Top" Width="89"/>
-        <TextBox x:Name="textTargetFile" HorizontalAlignment="Left" Height="21" Margin="161,47,0,0" TextWrapping="Wrap" Text="C:\work\とっても大事な文書.pdf" VerticalAlignment="Top" Width="203"/>
-        <Button x:Name="buttonSignature" Content="ファイルに署名する" HorizontalAlignment="Left" Height="36" Margin="98,94,0,0" VerticalAlignment="Top" Width="179" Click="ButtonSignature_Click" />
-        <TextBox x:Name="textLog" HorizontalAlignment="Left" Height="116" Margin="10,234,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="373"/>
+        <Label Content="署名アプリ" HorizontalAlignment="Left" Height="38" Margin="10,10,0,0" VerticalAlignment="Top" Width="267" FontSize="20" FontWeight="Bold"/>
+
+        <Label Content="PIN" HorizontalAlignment="Left" Height="29" Margin="10,73,0,0" VerticalAlignment="Top" Width="89"/>
+        <TextBox x:Name="textPIN" HorizontalAlignment="Left" Height="21" Margin="27,107,0,0" TextWrapping="Wrap" Text="1234" VerticalAlignment="Top" Width="117"/>
+        <Label Content="ファイル" HorizontalAlignment="Left" Height="29" Margin="10,152,0,0" VerticalAlignment="Top" Width="89"/>
+        <TextBox x:Name="textTargetFile" HorizontalAlignment="Left" Height="45" Margin="27,186,0,0" TextWrapping="Wrap" Text="C:\work\とっても大事な文書.pdf" VerticalAlignment="Top" Width="435"/>
+        <Button x:Name="buttonSignature" Content="ファイルに署名する" HorizontalAlignment="Left" Height="36" Margin="27,278,0,0" VerticalAlignment="Top" Width="435" Click="ButtonSignature_Click" />
+        <TextBox x:Name="textLog" HorizontalAlignment="Left" Height="142" Margin="0,327,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="492" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto"/>
+        <Button x:Name="buttonSelect" Content="select" HorizontalAlignment="Left" Margin="387,236,0,0" VerticalAlignment="Top" Width="75" Click="ButtonSelect_Click"/>
 
     </Grid>
 </Window>

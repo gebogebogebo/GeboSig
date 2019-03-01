@@ -39,6 +39,23 @@ namespace GeboSigSignature
             InitializeComponent();
         }
 
+        private void addLog(string text, bool isError = true)
+        {
+            if (isError) {
+                textLog.Text = textLog.Text + "Error:";
+            }
+            textLog.Text = textLog.Text + string.Format($"{text}\r\n");
+        }
+
+        private void ButtonSelect_Click(object sender, RoutedEventArgs e)
+        {
+            var dialog = new Microsoft.Win32.OpenFileDialog();
+            if (dialog.ShowDialog() == true)
+            {
+                textTargetFile.Text = dialog.FileName;
+            }
+        }
+
         private async void ButtonSignature_Click(object sender, RoutedEventArgs e)
         {
             // input
@@ -205,5 +222,6 @@ namespace GeboSigSignature
 
             return signature;
         }
+
     }
 }

@@ -5,10 +5,17 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:GeboSigVerify"
         mc:Ignorable="d"
-        Title="GeboSig Verify" Height="400" Width="400" WindowStartupLocation="CenterScreen">
+        Title="GeboSig Verify" Height="500" Width="500" WindowStartupLocation="CenterScreen">
     <Grid>
-        <Button x:Name="buttonVerify" Content="Button" HorizontalAlignment="Left" Height="36" Margin="61.489,177,0,0" VerticalAlignment="Top" Width="179" Grid.Column="1" Click="ButtonVerify_Click"/>
-        <TextBox x:Name="textLog" HorizontalAlignment="Left" Height="116" Margin="10,234,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="373"/>
+        <Label Content="検証アプリ" HorizontalAlignment="Left" Height="38" Margin="10,10,0,0" VerticalAlignment="Top" Width="267" FontSize="20" FontWeight="Bold"/>
+        <Button x:Name="buttonVerify" Content="署名の検証" Height="36" Margin="34,0,0,147" VerticalAlignment="Bottom" Width="427" Click="ButtonVerify_Click" HorizontalAlignment="Left"/>
+        <TextBox x:Name="textLog" HorizontalAlignment="Left" Height="142" Margin="0,327,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="492" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto"/>
+        <Label Content="署名されたファイル(*.zip)" HorizontalAlignment="Left" Height="29" Margin="10,69,0,0" VerticalAlignment="Top" Width="142"/>
+        <TextBox x:Name="textTargetFile" HorizontalAlignment="Left" Height="31" Margin="34,98,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="427"/>
+        <Button x:Name="buttonSelect" Content="select" HorizontalAlignment="Left" Margin="386,134,0,0" VerticalAlignment="Top" Width="75" Click="ButtonSelect_Click"/>
+        <Label Content="作成者の証明書(*.crt)" HorizontalAlignment="Left" Height="29" Margin="10,170,0,0" VerticalAlignment="Top" Width="142"/>
+        <TextBox x:Name="textTargetCrt" HorizontalAlignment="Left" Height="31" Margin="34,199,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="427"/>
+        <Button x:Name="buttonSelectCrt" Content="select" HorizontalAlignment="Left" Margin="386,235,0,0" VerticalAlignment="Top" Width="75" RenderTransformOrigin="0.294,5.455" Click="ButtonSelectCrt_Click"/>
 
     </Grid>
 </Window>

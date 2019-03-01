@@ -5,17 +5,19 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:GeboSigRegister"
         mc:Ignorable="d"
-        Title="GeboSig Register" Height="400" Width="400" WindowStartupLocation="CenterScreen">
+        Title="GeboSig Register" Height="500" Width="500" WindowStartupLocation="CenterScreen">
     <Grid>
-        <Label Content="登録　初期化済みのFIDO2キーをセットしてください" HorizontalAlignment="Left" Height="32" Margin="36,10,0,0" VerticalAlignment="Top" Width="340"/>
-        <Label Content="User Name" HorizontalAlignment="Left" Height="29" Margin="46,55,0,0" VerticalAlignment="Top" Width="89"/>
-        <Label Content="PIN" HorizontalAlignment="Left" Height="29" Margin="46,101,0,0" VerticalAlignment="Top" Width="89"/>
-        <Label Content="証明書" HorizontalAlignment="Left" Height="29" Margin="46,135,0,0" VerticalAlignment="Top" Width="89"/>
-        <TextBox x:Name="textUserName" HorizontalAlignment="Left" Height="21" Margin="164.489,55,0,0" TextWrapping="Wrap" Text="TestUser" VerticalAlignment="Top" Width="117"/>
-        <TextBox x:Name="textPIN" HorizontalAlignment="Left" Height="21" Margin="164.489,105,0,0" TextWrapping="Wrap" Text="1234" VerticalAlignment="Top" Width="117"/>
-        <TextBox x:Name="textCert" HorizontalAlignment="Left" Height="21" Margin="165,139,0,0" TextWrapping="Wrap" Text="C:\work\" VerticalAlignment="Top" Width="117"/>
-        <Button x:Name="buttonRegister" Content="Register" HorizontalAlignment="Left" Height="36" Margin="111.489,177,0,0" VerticalAlignment="Top" Width="179" Click="ButtonRegister_Click"/>
-        <TextBox x:Name="textLog" HorizontalAlignment="Left" Height="116" Margin="10,234,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="373"/>
+        <Label Content="登録アプリ" HorizontalAlignment="Left" Height="38" Margin="10,10,0,0" VerticalAlignment="Top" Width="267" FontSize="20" FontWeight="Bold"/>
+
+        <Label Content="User Name" HorizontalAlignment="Left" Height="29" Margin="36,57,0,0" VerticalAlignment="Top" Width="89"/>
+        <Label Content="PIN" HorizontalAlignment="Left" Height="29" Margin="36,101,0,0" VerticalAlignment="Top" Width="89"/>
+        <Label Content="証明書出力パス" HorizontalAlignment="Left" Height="29" Margin="36,146,0,0" VerticalAlignment="Top" Width="110"/>
+        <TextBox x:Name="textUserName" HorizontalAlignment="Left" Height="21" Margin="160,61,0,0" TextWrapping="Wrap" Text="TestUser" VerticalAlignment="Top" Width="117"/>
+        <TextBox x:Name="textPIN" HorizontalAlignment="Left" Height="21" Margin="160,105,0,0" TextWrapping="Wrap" Text="1234" VerticalAlignment="Top" Width="117"/>
+        <TextBox x:Name="textCert" HorizontalAlignment="Left" Height="21" Margin="160,146,0,0" TextWrapping="Wrap" Text="C:\work\" VerticalAlignment="Top" Width="278"/>
+        <Button x:Name="buttonRegister" Content="登録" HorizontalAlignment="Left" Height="36" Margin="36,216,0,0" VerticalAlignment="Top" Width="402" Click="ButtonRegister_Click"/>
+        <TextBox x:Name="textLog" HorizontalAlignment="Left" Height="199" Margin="0,270,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="492" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto"/>
+        <Button x:Name="buttonSelect" Content="select" HorizontalAlignment="Left" Margin="363,172,0,0" VerticalAlignment="Top" Width="75" Click="ButtonSelect_Click" RenderTransformOrigin="0.495,2.119"/>
 
     </Grid>
 </Window>

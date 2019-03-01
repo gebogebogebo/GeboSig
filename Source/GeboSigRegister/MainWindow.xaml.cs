@@ -21,6 +21,7 @@ using Org.BouncyCastle.Security;
 using Org.BouncyCastle.X509;
 using GeboSigCommon;
 using System.Diagnostics;
+using Forms = System.Windows.Forms;
 
 namespace GeboSigRegister
 {
@@ -34,6 +35,29 @@ namespace GeboSigRegister
             InitializeComponent();
         }
 
+        private void addLog(string text, bool isError = true)
+        {
+            if (isError) {
+                textLog.Text = textLog.Text + "Error:";
+            }
+            textLog.Text = textLog.Text + string.Format($"{text}\r\n");
+        }
+
+        private void ButtonSelect_Click(object sender, RoutedEventArgs e)
+        {
+            // フォルダー参照ダイアログのインスタンスを生成
+            var dlg = new Forms.FolderBrowserDialog();
+
+            // 説明文を設定
+            dlg.Description = "フォルダーを選択してください。";
+
+            // ダイアログを表示
+            if (dlg.ShowDialog() == System.Windows.Forms.DialogResult.OK) {
+                // 選択されたフォルダーパスをメッセージボックスに表示
+                textCert.Text = dlg.SelectedPath;
+            }
+        }
+
         private async void ButtonRegister_Click(object sender, RoutedEventArgs e)
         {
             // 入力チェック
@@ -44,14 +68,6 @@ namespace GeboSigRegister
             // キーペアを作成
             var keyPair = createKeyPair(1024);
 
-            // PrivateKeyをPEMにする
-            //var pemPrivateKey = getPrivatekyPEM(keyPair);
-            //Debug.WriteLine($"PEM            {pemPrivateKey.Length}:{pemPrivateKey}");
-
-            // encPrivateKey = AES256(pemPrivateKey)
-            //var encPrivatekey = BouncyCastleRijndael.Encrypt(Encoding.UTF8.GetBytes(pemPrivateKey));
-            //Debug.WriteLine($"Enc(PEM) {encPrivatekey.Length}:{gebo.CTAP2.Common.BytesToHexString(encPrivatekey)}");
-
             // PrivateKeyをDERにする
             var derPrivatekey = getPrivatekyDER(keyPair);
             Debug.WriteLine($"DER            {derPrivatekey.Length}:{gebo.CTAP2.Common.BytesToHexString(derPrivatekey)}");
@@ -59,10 +75,6 @@ namespace GeboSigRegister
             // AES(256)
             var encPrivatekey = BouncyCastleRijndael.Encrypt(derPrivatekey);
             Debug.WriteLine($"DER(Encrypted) {encPrivatekey.Length}:{gebo.CTAP2.Common.BytesToHexString(encPrivatekey)}");
-
-            //var tmp = BouncyCastleRijndael.Decrypt(encPrivatekey);
-            //var tmppem = Encoding.UTF8.GetString(tmp);
-            //Debug.WriteLine($"Dec(PEM) {tmppem.Length}:{tmppem}");
 
             // 証明書を作成
             var cert = createCertificate(keyPair,textUserName.Text);
@@ -145,22 +157,6 @@ namespace GeboSigRegister
 
             return (keyPair);
         }
-
-        /*
-        private string getPrivatekyPEM(AsymmetricCipherKeyPair keyPair)
-        {
-            var mem = new MemoryStream();
-            using (var writer = new StreamWriter(mem, Encoding.ASCII))
-            {
-                var pemWriter = new PemWriter(writer);
-                pemWriter.WriteObject(keyPair.Private);
-                pemWriter.Writer.Flush();
-            }
-            var pem = Encoding.UTF8.GetString(mem.ToArray());
-
-            return (pem);
-        }
-        */
 
         private byte[] getPrivatekyDER(AsymmetricCipherKeyPair keyPair)
         {
@@ -318,5 +314,6 @@ namespace GeboSigRegister
 
             return (pem);
         }
+
     }
 }

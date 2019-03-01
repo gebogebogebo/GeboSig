@@ -19,6 +19,7 @@ using Org.BouncyCastle.OpenSsl;
 using Org.BouncyCastle.Pkcs;
 using Org.BouncyCastle.Security;
 using Org.BouncyCastle.X509;
+using System.IO.Compression;
 
 namespace GeboSigVerify
 {
@@ -31,46 +32,121 @@ namespace GeboSigVerify
         {
             InitializeComponent();
 
+            addLog("openSSLでやる場合は以下のコマンド", false);
+            addLog("openssl x509 -in TestUser.crt -pubkey -noout>public-key.pem",false);
+            addLog("openssl dgst -sha1 -verify public-key.pem -signature sig.sig とっても大事な文書.pdf",false);
+        }
+
+        private void addLog(string text, bool isError = true)
+        {
+            if (isError) {
+                textLog.Text = textLog.Text + "Error:";
+            }
+            textLog.Text = textLog.Text + string.Format($"{text}\r\n");
+        }
+
+        private void ButtonSelect_Click(object sender, RoutedEventArgs e)
+        {
+            var dialog = new Microsoft.Win32.OpenFileDialog();
+            if (dialog.ShowDialog() == true)
             {
-                string command = "";
+                textTargetFile.Text = dialog.FileName;
+            }
+        }
 
-                command = "openssl x509 -in TestUser.crt -pubkey -noout>public-key.pem";
-                textLog.Text = textLog.Text + string.Format($"{command}\r\n");
-
-                command = "openssl dgst -sha1 -verify public-key.pem -signature sig.sig とっても大事な文書.pdf";
-                textLog.Text = textLog.Text + string.Format($"{command}\r\n");
-
+        private void ButtonSelectCrt_Click(object sender, RoutedEventArgs e)
+        {
+            var dialog = new Microsoft.Win32.OpenFileDialog();
+            if (dialog.ShowDialog() == true)
+            {
+                textTargetCrt.Text = dialog.FileName;
             }
         }
 
         private void ButtonVerify_Click(object sender, RoutedEventArgs e)
         {
-            // input 
-            string file_in_sig = @"C:\work\sig.sig";
-            string file_in_target = @"C:\work\とっても大事な文書.pdf";
+            addLog("Verify Start!",false);
+            bool result = false;
+            string resultMsg = "";
 
-            var publicKey = readPublicKeyfromCert(@"C:\work\TestUser.crt");
+            try {
+                // input 
+                string file_in_zip = textTargetFile.Text;
+                if (string.IsNullOrEmpty(file_in_zip)) {
+                    addLog("署名されたファイルを指定してください");
+                    return;
+                }
 
-            ISigner signer = SignerUtilities.GetSigner(GeboSigCommon.Common.SigAlgorithm);
-            signer.Init(false, publicKey);
+                string file_in_crt = textTargetCrt.Text;
+                if (string.IsNullOrEmpty(file_in_crt)) {
+                    addLog("作成者の証明書ファイルを指定してください");
+                    return;
+                }
 
-            // 一回よみこまないといけないの？！・・・
-            var expectedSig = System.IO.File.ReadAllBytes(file_in_sig);
+                byte[] msgBytes;
+                byte[] expectedSig;
+                if (getVerifyFileandSig(file_in_zip, out msgBytes, out expectedSig) == false) {
+                    // error
+                    addLog("署名ファイルの読み込み失敗");
+                    return;
+                }
 
-            // Get the bytes to be signed from the string
-            var msgBytes = System.IO.File.ReadAllBytes(file_in_target);
+                var publicKey = readPublicKeyfromCert(file_in_crt);
+                if (publicKey == null) {
+                    addLog("証明書ファイルの読み込み失敗");
+                    return;
+                }
 
-            // Calculate the signature and see if it matches
-            signer.BlockUpdate(msgBytes, 0, msgBytes.Length);
-            var result =  signer.VerifySignature(expectedSig);
+                ISigner signer = SignerUtilities.GetSigner(GeboSigCommon.Common.SigAlgorithm);
+                signer.Init(false, publicKey);
 
-            textLog.Text = string.Format($"{result}\r\n");
+                // Calculate the signature and see if it matches
+                signer.BlockUpdate(msgBytes, 0, msgBytes.Length);
+                result = signer.VerifySignature(expectedSig);
+
+                resultMsg = string.Format($"検証結果={result}");
+                addLog(resultMsg, false);
+
+            } catch (Exception ex) {
+                addLog("Verify");
+            }
+
+            addLog("Verify End!", false);
+
+            if (result) {
+                MessageBox.Show(resultMsg,"おめでとうございます");
+            } else {
+                MessageBox.Show(resultMsg,"ざんねんでした");
+            }
 
             return;
         }
 
-        // 署名作成はここが参考になるかも
-        // https://codeday.me/jp/qa/20190217/287736.html
+        private bool getVerifyFileandSig(string zip,out byte[] target, out byte[] sig)
+        {
+            target = null;
+            sig = null;
+            using (ZipArchive archive = ZipFile.OpenRead(zip)) {
+                if( archive.Entries.Count != 2) {
+                    return false;
+                }
+
+                foreach (ZipArchiveEntry entry in archive.Entries) {
+                    if (entry.Name == "sig.sig") {
+                        sig = new byte[entry.Length];
+                        using (Stream stream = entry.Open()) {
+                            var result = stream.Read(sig, 0, (int)entry.Length);
+                        }
+                    } else {
+                        target = new byte[entry.Length];
+                        using (Stream stream = entry.Open()) {
+                            var result = stream.Read(target, 0, (int)entry.Length);
+                        }
+                    }
+                }
+            }
+            return true;
+        }
 
         private AsymmetricKeyParameter readPublicKeyfromCert(string certFile)
         {
