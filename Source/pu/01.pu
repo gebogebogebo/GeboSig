@@ -15,19 +15,19 @@ package "Register" {
 }
 
 package "ChangePIN" {
-    :一般ユーザー: as User0
+    :ユーザーA: as User0
     [セキュリティキー] as Authenticator1
     (PIN更新アプリ) as GeboSigChangePIN
 
-    Authenticator .down.> Authenticator1
-    Authenticator1 -right-> User0
+    Authenticator -down-> User0 : 初期設定された\nセキュリティキーを渡す
+    User0 -right-> Authenticator1
     Authenticator1 -down-> GeboSigChangePIN
     User0 -> GeboSigChangePIN
 }
 
 package "Signature" {
     [セキュリティキー] as Authenticator2
-    :一般ユーザー: as User
+    :ユーザーA: as User
     (署名アプリ) as GeboSigSignature
     [書類ファイル] as Document
     '[電子署名] as Sig
@@ -35,7 +35,7 @@ package "Signature" {
 
     User0 .down.> User
     GeboSigChangePIN -down-> Authenticator2
-    Authenticator2 -> User
+    Authenticator2 .right. User
     User -down-> Document
     User -> GeboSigSignature
     Document -> GeboSigSignature  
@@ -44,17 +44,18 @@ package "Signature" {
 }
 
 package "Verify" {
-    [署名された書類ファイル] as Zip2
+    [署名された書類ファイル] as Zip2 
     :マネージャ: as Manager
     [書類ファイル] as Document2
     [電子署名] as Sig2
     (検証アプリ) as GeboSigVerify
 
-    Zip .down.> Zip2
+    Zip .down.> Manager : メールなどで送信
+    Manager .right.> Zip2
     Zip2 -down-> Document2
     Zip2 -down-> Sig2
-    Manager -> GeboSigVerify : 書類ファイルの真正性チェック 
-    Manager <. GeboSigVerify : 検証OK 
+    Manager -rigitt-> GeboSigVerify : 書類ファイルの真正性チェック 
+    Manager <.left. GeboSigVerify : 検証OK 
 
     Cert -> GeboSigVerify
     Sig2 -down-> GeboSigVerify 

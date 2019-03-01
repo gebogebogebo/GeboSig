@@ -9,11 +9,9 @@
     <Grid>
         <Label Content="PIN" HorizontalAlignment="Left" Height="29" Margin="41,9,0,0" VerticalAlignment="Top" Width="89"/>
         <TextBox x:Name="textPIN" HorizontalAlignment="Left" Height="21" Margin="160,13,0,0" TextWrapping="Wrap" Text="1234" VerticalAlignment="Top" Width="117"/>
-        <Label Content="署名対象ファイル" HorizontalAlignment="Left" Height="29" Margin="41,43,0,0" VerticalAlignment="Top" Width="89"/>
+        <Label Content="ファイル" HorizontalAlignment="Left" Height="29" Margin="41,43,0,0" VerticalAlignment="Top" Width="89"/>
         <TextBox x:Name="textTargetFile" HorizontalAlignment="Left" Height="21" Margin="161,47,0,0" TextWrapping="Wrap" Text="C:\work\とっても大事な文書.pdf" VerticalAlignment="Top" Width="203"/>
-        <Label Content="署名出力パス" HorizontalAlignment="Left" Height="29" Margin="41,88,0,0" VerticalAlignment="Top" Width="89"/>
-        <TextBox x:Name="textSigPath" HorizontalAlignment="Left" Height="21" Margin="161,88,0,0" TextWrapping="Wrap" Text="C:\work\" VerticalAlignment="Top" Width="203"/>
-        <Button x:Name="buttonSignature" Content="Signature" HorizontalAlignment="Left" Height="36" Margin="97,144,0,0" VerticalAlignment="Top" Width="179" Click="ButtonSignature_Click" />
+        <Button x:Name="buttonSignature" Content="ファイルに署名する" HorizontalAlignment="Left" Height="36" Margin="98,94,0,0" VerticalAlignment="Top" Width="179" Click="ButtonSignature_Click" />
         <TextBox x:Name="textLog" HorizontalAlignment="Left" Height="116" Margin="10,234,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="373"/>
 
     </Grid>

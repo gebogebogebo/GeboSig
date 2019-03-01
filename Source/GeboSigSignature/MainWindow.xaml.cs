@@ -44,9 +44,6 @@ namespace GeboSigSignature
             // input
             string file_in_target = textTargetFile.Text;
 
-            // output
-            //string file_out_sig = string.Format($"{textSigPath.Text}sig.sig");
-
             textLog.Text = textLog.Text + string.Format($"Read-Start ... ");
 
             var readData = await readRecs(GeboSigCommon.Common.RPID, textPIN.Text);
@@ -57,7 +54,6 @@ namespace GeboSigSignature
             }
 
             Debug.WriteLine($"DER(Encrypted) {readData.data.Length}:{gebo.CTAP2.Common.BytesToHexString(readData.data)}");
-            //Debug.WriteLine($"Enc(PEM) {readData.data.Length}:{gebo.CTAP2.Common.BytesToHexString(readData.data)}");
 
             // Decrypt
             var decData = BouncyCastleRijndael.Decrypt(readData.data);
@@ -77,25 +73,7 @@ namespace GeboSigSignature
             // 署名作成
             var sig = createSign(keyPair, System.IO.File.ReadAllBytes(file_in_target));
 
-            /*
-            {
-                // RSA暗号標準オブジェクト(PKCS#1)を生成
-                var rsa = new Pkcs1Encoding(new RsaEngine());
-
-                // RSA暗号オブジェクトを初期化（第１引数 true は「暗号」を示す）
-                rsa.Init(true, keyPair.Private);
-
-                // 署名元データ生成
-                var dgstinfo = GeboSigCommon.Common.CreateSHA1DigestInfo(file_in_target);
-
-                // 暗号化されたバイト列を渡し、復号されたバイト列を受け取る
-                byte[] sig = rsa.ProcessBlock(dgstinfo, 0, dgstinfo.Length);
-
-                System.IO.File.WriteAllBytes(file_out_sig, sig);
-            }
-            */
-
-            // ターゲットファイルと署名をzip
+            // ターゲットファイルと署名をzipしてデスクトップに作成
             createZip(file_in_target, sig);
 
             textLog.Text = textLog.Text + string.Format($"Signature ... Success!");
