@@ -1,0 +1,19 @@
+﻿<Window x:Class="GeboSigChangePIN.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:GeboSigChangePIN"
+        mc:Ignorable="d"
+        Title="GeboSig ChangePIN" Height="500" Width="500" WindowStartupLocation="CenterScreen">
+    <Grid>
+        <Label Content="PIN変更アプリ" HorizontalAlignment="Left" Height="38" Margin="10,10,0,0" VerticalAlignment="Top" Width="267" FontSize="20" FontWeight="Bold"/>
+        <TextBox x:Name="textLog" HorizontalAlignment="Left" Height="199" Margin="0,270,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="492" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto"/>
+        <Label Content="新しいPIN" HorizontalAlignment="Left" Margin="26,146,0,0" VerticalAlignment="Top"/>
+        <Label Content="現在のPIN" HorizontalAlignment="Left" Margin="26,88,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.752,1.879"/>
+        <TextBox x:Name="textNewPIN" HorizontalAlignment="Left" Height="23" Margin="138,149,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="120"/>
+        <TextBox x:Name="textCurrentPIN" HorizontalAlignment="Left" Height="23" Margin="138,91,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="120"/>
+        <Button x:Name="buttonChangePIN" Content="PIN変更" HorizontalAlignment="Left" Margin="54,215,0,0" VerticalAlignment="Top" Width="383" Height="36" Click="ButtonChangePIN_Click" />
+
+    </Grid>
+</Window>

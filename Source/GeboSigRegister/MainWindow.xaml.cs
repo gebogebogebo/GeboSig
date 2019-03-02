@@ -68,8 +68,11 @@ namespace GeboSigRegister
             // キーペアを作成
             var keyPair = createKeyPair(1024);
 
+            // PrivateKeyをGET
+            var pemPrivateKey = getPrivatekyPEM(keyPair);
+
             // PrivateKeyをDERにする
-            var derPrivatekey = getPrivatekyDER(keyPair);
+            var derPrivatekey = GeboSigCommon.Common.ConvertPEMtoDER(pemPrivateKey);
             Debug.WriteLine($"DER            {derPrivatekey.Length}:{gebo.CTAP2.Common.BytesToHexString(derPrivatekey)}");
 
             // AES(256)
@@ -88,7 +91,7 @@ namespace GeboSigRegister
             {
                 var writeDataList = createWriteDataList(encPrivatekey);
 
-                textLog.Text = textLog.Text + string.Format($"Write-Start {writeDataList.Count} \r\n");
+                addLog(string.Format($"Write-Start {writeDataList.Count}"));
                 foreach (var rec in writeDataList) {
                     textLog.Text = textLog.Text + string.Format($"WrittengData...{rec.recno}");
 
@@ -96,7 +99,7 @@ namespace GeboSigRegister
                     msg = string.Format($"...{msg}") + "\r\n";
                     textLog.Text = textLog.Text + msg;
                 }
-                textLog.Text = textLog.Text + "Write-End\r\n";
+                addLog(string.Format($"Write-End"));
             }
 
             // 証明書をエクスポート
@@ -105,7 +108,9 @@ namespace GeboSigRegister
                 File.WriteAllText(file, cert);
             }
 
-            textLog.Text = textLog.Text + "Register-Success!\r\n";
+            addLog(string.Format($"Register-Success"));
+
+            MessageBox.Show("登録が完了しました");
 
             return;
         }
@@ -117,14 +122,14 @@ namespace GeboSigRegister
                 var info = await WebAuthnModokiDesktop.credentials.info(gebo.CTAP2.DevParam.getDefaultParams());
                 if (info.isSuccess == false)
                 {
-                    textLog.Text = textLog.Text + string.Format($"Check Error ...{info.msg}");
+                    addLog(string.Format($"Check Error ...{info.msg}"));
                     return false;
                 }
 
                 // PINが設定されていない状態でないといけない
                 if (info.AuthenticatorInfo.Option_clientPin != gebo.CTAP2.CTAPResponseInfo.OptionFlag.present_and_set_to_false)
                 {
-                    textLog.Text = textLog.Text + string.Format($"Check Error ...Authenticatorを初期化してください");
+                    addLog(string.Format($"Check Error ...Authenticatorを初期化してください"));
                     return false;
                 }
             }
@@ -136,7 +141,7 @@ namespace GeboSigRegister
         {
             var status = await WebAuthnModokiDesktop.credentials.setpin(gebo.CTAP2.DevParam.getDefaultParams(), pin);
             if( status.isSuccess == false) {
-                textLog.Text = textLog.Text + string.Format($"Set PIN Error ...{status.msg}");
+                addLog(string.Format($"Set PIN Error ...{status.msg}"));
                 return false;
             }
 
@@ -158,7 +163,7 @@ namespace GeboSigRegister
             return (keyPair);
         }
 
-        private byte[] getPrivatekyDER(AsymmetricCipherKeyPair keyPair)
+        private string getPrivatekyPEM(AsymmetricCipherKeyPair keyPair)
         {
             var mem = new MemoryStream();
             using (var writer = new StreamWriter(mem, Encoding.ASCII)) {
@@ -168,9 +173,7 @@ namespace GeboSigRegister
             }
             var pem = Encoding.UTF8.GetString(mem.ToArray());
 
-            var der = GeboSigCommon.Common.ConvertPEMtoDER(pem);
-
-            return (der);
+            return (pem);
         }
 
         private List<WriteData> createWriteDataList(byte[] derPrivatekey)

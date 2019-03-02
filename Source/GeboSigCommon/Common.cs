@@ -20,7 +20,7 @@ namespace GeboSigCommon
         }
         private static string ConvertDERtoPEM(byte[] der)
         {
-            // DER形式の証明書をPEM形式に変換する
+            // DER形式をPEM形式に変換する
             //     DER -> 鍵や証明書をASN.1というデータ構造で表し、それをシリアライズしたバイナリファイル
             //     PEM -> DERと同じASN.1のバイナリデータをBase64によってテキスト化されたファイル 
             // 1.Base64エンコード

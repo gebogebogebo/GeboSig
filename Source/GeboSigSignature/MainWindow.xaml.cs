@@ -24,8 +24,8 @@ using Org.BouncyCastle.Math;
 
 using GeboSigCommon;
 using Org.BouncyCastle.Security;
-using System.IO.Compression;
 using System.Diagnostics;
+using System.IO.Compression;
 
 namespace GeboSigSignature
 {
@@ -61,9 +61,13 @@ namespace GeboSigSignature
             // input
             string file_in_target = textTargetFile.Text;
 
-            textLog.Text = textLog.Text + string.Format($"Read-Start ... ");
+            addLog("Read-Start ...",true);
 
-            var readData = await readRecs(GeboSigCommon.Common.RPID, textPIN.Text);
+            string pin = "";
+            if(checkPIN.IsChecked.Value) {
+                pin = textPIN.Text;
+            }
+            var readData = await readRecs(GeboSigCommon.Common.RPID, pin);
             textLog.Text = textLog.Text + string.Format($"...{readData.msg}") + "\r\n";
 
             if (readData.isSuccess == false) {
@@ -83,17 +87,15 @@ namespace GeboSigSignature
             // DER to PEM
             var pemPrivateKey = GeboSigCommon.Common.ConvertPrivateKeyDERtoPEM(decPrivateKey);
 
-            // PEMフォーマットの秘密鍵を読み込んで KeyPair オブジェクトを生成
-            var privateKeyReader = new PemReader(new StringReader(pemPrivateKey));
-            var keyPair = (AsymmetricCipherKeyPair)privateKeyReader.ReadObject();
-
             // 署名作成
-            var sig = createSign(keyPair, System.IO.File.ReadAllBytes(file_in_target));
+            var sig = createSign(pemPrivateKey, file_in_target);
 
             // ターゲットファイルと署名をzipしてデスクトップに作成
             createZip(file_in_target, sig);
 
-            textLog.Text = textLog.Text + string.Format($"Signature ... Success!");
+            addLog("Signature ... Success!",true);
+
+            MessageBox.Show("署名付きファイルをデスクトップに作成しました");
 
             return;
         }
@@ -131,7 +133,7 @@ namespace GeboSigSignature
             {
                 z.CreateEntryFromFile(targetFile, targetFileName, CompressionLevel.Optimal);
 
-                ZipArchiveEntry item = z.CreateEntry("sig.sig",CompressionLevel.Optimal);
+                ZipArchiveEntry item = z.CreateEntry("sig.sig", CompressionLevel.Optimal);
                 using (Stream stream = item.Open())
                 {
                     stream.Write(sig, 0, sig.Length);
@@ -146,6 +148,10 @@ namespace GeboSigSignature
         {
             ReadData result;
             try {
+                string uv = "preferred";
+                if(string.IsNullOrEmpty(pin)==false) {
+                    uv = "discouraged";
+                }
 
                 result = await Task<ReadData>.Run(async () => {
                     var readData = new ReadData();
@@ -163,7 +169,7 @@ namespace GeboSigSignature
                                string.Format($"type : 'public-key',") +
                            @"}]," +
                            string.Format($"requireUserPresence : 'false',") +
-                           string.Format($"userVerification : 'discouraged',") +
+                           string.Format($"userVerification : '{uv}',") +
                         "}";
 
                     var ret = await WebAuthnModokiDesktop.credentials.get(gebo.CTAP2.DevParam.getDefaultParams(), json, pin);
@@ -199,21 +205,19 @@ namespace GeboSigSignature
         }
 
 
-        private byte[] createSign(AsymmetricCipherKeyPair keyPair, byte[] data)
+        private byte[] createSign(string pemPrivateKey, string targetfilepath)
         {
-            // Make the key
+            byte[] data = System.IO.File.ReadAllBytes(targetfilepath);
+
+            // PEMフォーマットの秘密鍵を読み込んで KeyPair オブジェクトを生成
+            var privateKeyReader = new PemReader(new StringReader(pemPrivateKey));
+            var keyPair = (AsymmetricCipherKeyPair)privateKeyReader.ReadObject();
+
             RsaKeyParameters key = (RsaKeyParameters)keyPair.Private;
-
-            // Init alg
             ISigner sig = SignerUtilities.GetSigner(GeboSigCommon.Common.SigAlgorithm);
-
-            // Populate key
             sig.Init(true, key);
 
-            // Get the bytes to be signed from the string
             var bytes = data;
-
-            // Calc the signature
             sig.BlockUpdate(bytes, 0, bytes.Length);
             byte[] signature = sig.GenerateSignature();
 

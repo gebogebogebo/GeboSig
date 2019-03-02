@@ -4,7 +4,7 @@ package "Repository" {
     [証明書] as Cert
 }
 
-package "Register" {
+package "Administrator-Register" {
     :システム管理者: as Admin
     [セキュリティキー] as Authenticator
     (登録アプリ) as GeboSigRegister
@@ -14,15 +14,16 @@ package "Register" {
     GeboSigRegister -down-> Cert
 }
 
-package "ChangePIN" {
+package "User-Register" {
     :ユーザーA: as User0
     [セキュリティキー] as Authenticator1
     (PIN更新アプリ) as GeboSigChangePIN
+    (指紋登録アプリ) as BioPassTool
 
     Authenticator -down-> User0 : 初期設定された\nセキュリティキーを渡す
-    User0 -right-> Authenticator1
+    User0 -left-> Authenticator1
     Authenticator1 -down-> GeboSigChangePIN
-    User0 -> GeboSigChangePIN
+    GeboSigChangePIN -> BioPassTool
 }
 
 package "Signature" {
@@ -34,10 +35,10 @@ package "Signature" {
     [署名された書類ファイル] as Zip
 
     User0 .down.> User
-    GeboSigChangePIN -down-> Authenticator2
+    BioPassTool -down-> Authenticator2
     Authenticator2 .right. User
     User -down-> Document
-    User -> GeboSigSignature
+    'User -> GeboSigSignature
     Document -> GeboSigSignature  
     Authenticator2 -> GeboSigSignature
     GeboSigSignature -down-> Zip
@@ -54,7 +55,7 @@ package "Verify" {
     Manager .right.> Zip2
     Zip2 -down-> Document2
     Zip2 -down-> Sig2
-    Manager -rigitt-> GeboSigVerify : 書類ファイルの真正性チェック 
+    Manager -right-> GeboSigVerify : 書類ファイルの真正性チェック 
     Manager <.left. GeboSigVerify : 検証OK 
 
     Cert -> GeboSigVerify

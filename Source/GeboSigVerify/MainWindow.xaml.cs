@@ -19,7 +19,6 @@ using Org.BouncyCastle.OpenSsl;
 using Org.BouncyCastle.Pkcs;
 using Org.BouncyCastle.Security;
 using Org.BouncyCastle.X509;
-using System.IO.Compression;
 
 namespace GeboSigVerify
 {
@@ -83,9 +82,9 @@ namespace GeboSigVerify
                     return;
                 }
 
-                byte[] msgBytes;
-                byte[] expectedSig;
-                if (getVerifyFileandSig(file_in_zip, out msgBytes, out expectedSig) == false) {
+                byte[] target;
+                byte[] sig;
+                if (getVerifyFileandSig(file_in_zip, out target, out sig) == false) {
                     // error
                     addLog("署名ファイルの読み込み失敗");
                     return;
@@ -97,12 +96,8 @@ namespace GeboSigVerify
                     return;
                 }
 
-                ISigner signer = SignerUtilities.GetSigner(GeboSigCommon.Common.SigAlgorithm);
-                signer.Init(false, publicKey);
-
-                // Calculate the signature and see if it matches
-                signer.BlockUpdate(msgBytes, 0, msgBytes.Length);
-                result = signer.VerifySignature(expectedSig);
+                // verify
+                result = verify(target, sig, publicKey);
 
                 resultMsg = string.Format($"検証結果={result}");
                 addLog(resultMsg, false);
@@ -126,12 +121,12 @@ namespace GeboSigVerify
         {
             target = null;
             sig = null;
-            using (ZipArchive archive = ZipFile.OpenRead(zip)) {
+            using (System.IO.Compression.ZipArchive archive = System.IO.Compression.ZipFile.OpenRead(zip)) {
                 if( archive.Entries.Count != 2) {
                     return false;
                 }
 
-                foreach (ZipArchiveEntry entry in archive.Entries) {
+                foreach (System.IO.Compression.ZipArchiveEntry entry in archive.Entries) {
                     if (entry.Name == "sig.sig") {
                         sig = new byte[entry.Length];
                         using (Stream stream = entry.Open()) {
@@ -163,5 +158,16 @@ namespace GeboSigVerify
             return (publicKey);
         }
 
+
+        private bool verify(byte[] target,byte[] sig,AsymmetricKeyParameter publicKey)
+        {
+            ISigner signer = SignerUtilities.GetSigner(GeboSigCommon.Common.SigAlgorithm);
+            signer.Init(false, publicKey);
+
+            signer.BlockUpdate(target, 0, target.Length);
+            var result = signer.VerifySignature(sig);
+
+            return result;
+        }
     }
 }

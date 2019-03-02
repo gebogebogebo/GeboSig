@@ -11,6 +11,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GeboSigVerify", "GeboSigVer
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GeboSigCommon", "GeboSigCommon\GeboSigCommon.csproj", "{C956F10E-F224-48DD-BE00-2E3F332007F5}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GeboSigChangePIN", "GeboSigChangePIN\GeboSigChangePIN.csproj", "{6543B60A-DCC9-4AA6-B948-6CCA7E804079}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -33,6 +35,10 @@ Global
 		{C956F10E-F224-48DD-BE00-2E3F332007F5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C956F10E-F224-48DD-BE00-2E3F332007F5}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C956F10E-F224-48DD-BE00-2E3F332007F5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6543B60A-DCC9-4AA6-B948-6CCA7E804079}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6543B60A-DCC9-4AA6-B948-6CCA7E804079}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6543B60A-DCC9-4AA6-B948-6CCA7E804079}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6543B60A-DCC9-4AA6-B948-6CCA7E804079}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
