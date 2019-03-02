@@ -102,18 +102,14 @@ namespace GeboSigSignature
 
         private byte[] getPrivateKey(byte[] decData)
         {
-            if(decData[0] != 0x30)
-            {
+            if(decData[0] != 0x30) {
                 return (null);
             }
-            if (decData[1] != 0x82)
-            {
+            if (decData[1] != 0x82) {
                 return (null);
             }
 
             var datasize = (int)ChangeEndian.Reverse(BitConverter.ToUInt16(decData, 2));
-            // blockData-4byte + status-2byte 
-            //datasize = ChangeEndian.Reverse(BitConverter.ToUInt16(response.Data, 2));
 
             // add header-4byte
             datasize = datasize + 4;
