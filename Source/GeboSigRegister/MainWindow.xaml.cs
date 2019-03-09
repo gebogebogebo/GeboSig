@@ -119,7 +119,7 @@ namespace GeboSigRegister
         {
             if( checkPIN)
             {
-                var info = await WebAuthnModokiDesktop.credentials.info(gebo.CTAP2.DevParam.getDefaultParams());
+                var info = await gebo.CTAP2.WebAuthnModokiDesktop.Credentials.Info(gebo.CTAP2.DevParam.GetDefaultParams());
                 if (info.isSuccess == false)
                 {
                     addLog(string.Format($"Check Error ...{info.msg}"));
@@ -139,7 +139,7 @@ namespace GeboSigRegister
 
         private async Task<bool> setNewPIN(string pin)
         {
-            var status = await WebAuthnModokiDesktop.credentials.setpin(gebo.CTAP2.DevParam.getDefaultParams(), pin);
+            var status = await gebo.CTAP2.WebAuthnModokiDesktop.Credentials.SetPin(gebo.CTAP2.DevParam.GetDefaultParams(), pin);
             if( status.isSuccess == false) {
                 addLog(string.Format($"Set PIN Error ...{status.msg}"));
                 return false;
@@ -256,7 +256,7 @@ namespace GeboSigRegister
                                 string.Format($"challenge:[{string.Join(",", challenge)}],") +
                             "}";
 
-                    var ret = await WebAuthnModokiDesktop.credentials.create(gebo.CTAP2.DevParam.getDefaultParams(), json, pin);
+                    var ret = await gebo.CTAP2.WebAuthnModokiDesktop.Credentials.Create(gebo.CTAP2.DevParam.GetDefaultParams(), json, pin);
                     if (ret.isSuccess == false) {
                         return ret.msg;
                     }

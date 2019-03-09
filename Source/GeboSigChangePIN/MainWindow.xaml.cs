@@ -47,8 +47,8 @@ namespace GeboSigChangePIN
                 return ;
             }
 
-            var devParam = gebo.CTAP2.DevParam.getDefaultParams();
-            var ret = await WebAuthnModokiDesktop.credentials.changepin(devParam, newpin, currentpin);
+            var devParam = gebo.CTAP2.DevParam.GetDefaultParams();
+            var ret = await gebo.CTAP2.WebAuthnModokiDesktop.Credentials.ChangePin(devParam, newpin, currentpin);
             if (ret.isSuccess == true) {
                 addLog("PIN変更OK",false);
                 MessageBox.Show("PIN変更OK");

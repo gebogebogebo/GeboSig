@@ -168,7 +168,7 @@ namespace GeboSigSignature
                            string.Format($"userVerification : '{uv}',") +
                         "}";
 
-                    var ret = await WebAuthnModokiDesktop.credentials.get(gebo.CTAP2.DevParam.getDefaultParams(), json, pin);
+                    var ret = await gebo.CTAP2.WebAuthnModokiDesktop.Credentials.Get(gebo.CTAP2.DevParam.GetDefaultParams(), json, pin);
                     if (ret.isSuccess == false) {
                         readData.isSuccess = false;
                         readData.msg = ret.msg;
